@@ -15,12 +15,6 @@ import {
 import { toolContractMetadata } from "../toolEffects.js";
 import { requireOutputSchema } from "../toolOutputSchemaPrimitives.js";
 
-/** Inline Evidence input for importing reconstruction. */
-export const managedReconstructionReferenceInputSchema =
-  managedReconstructionImportInputSchema.extend({
-    static_members: evidenceSchema,
-  });
-
 const managedApplicationGraphReferenceShape = z.strictObject({
   managed_artifact: evidenceSchema.optional(),
   managed_members: evidenceSchema.optional(),
@@ -121,7 +115,7 @@ export const MANAGED_WORKFLOW_TOOL_CONTRACTS = [
     description:
       "Import decompiler-produced managed reconstruction against authenticated inspect_managed_members Evidence. The workflow locks each method to artifact SHA-256, MVID, metadata token, signature hash, and the limited decoded-IL tuple hash, records the decompiler identity and options, and marks C# or pseudocode as analyst inference rather than canonical byte observation.",
     kind: "application",
-    inputSchema: managedReconstructionReferenceInputSchema,
+    inputSchema: managedReconstructionImportInputSchema,
     outputSchema: reconstructionOutputSchema,
     examples: [
       {
@@ -139,7 +133,7 @@ export const MANAGED_WORKFLOW_TOOL_CONTRACTS = [
     name: "project_managed_application_graph",
     ...toolContractMetadata("project_managed_application_graph"),
     description:
-      "Project authenticated managed artifact, member, and native-boundary Evidence into the provider-neutral application graph without executing managed code, loading assemblies, or translating managed metadata tokens to native addresses. The graph preserves managed static observations as managed-specific nodes linked to source Evidence.",
+      "Project authenticated managed artifact, member, and native-boundary Evidence into the provider-neutral application graph without executing managed code, loading assemblies, or translating managed metadata tokens to native addresses. The graph preserves managed static observations as managed-specific nodes linked to source Evidence, with in-module calls and field-access edges; other call and field-access sites are counted in limitations.",
     kind: "application",
     inputSchema: managedApplicationGraphReferenceInputSchema,
     outputSchema: managedApplicationGraphOutputSchema,
